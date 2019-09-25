@@ -1,12 +1,19 @@
-﻿using System;
+﻿using System.Threading.Tasks;
+
+using Hermes.Core;
+using Hermes.Core.Configuration;
 
 namespace Hermes
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args) =>
+            MainAsync(args).GetAwaiter().GetResult();
+
+        private static async Task MainAsync(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            await new HermesBot(
+                new BotConfiguration("hermes.config.json"), args).StartAsync();
         }
     }
 }
