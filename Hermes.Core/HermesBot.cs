@@ -1,5 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+
+using Discord;
+using Discord.WebSocket;
 
 using Hermes.Core.Configuration;
 
@@ -8,20 +10,29 @@ namespace Hermes.Core
     public class HermesBot : IBot
     {
         private readonly IBotConfiguration _botConfiguration;
+        private readonly DiscordSocketClient _client;
 
-        public HermesBot(IBotConfiguration botConfiguration, string[] args)
+        public HermesBot(IBotConfiguration botConfiguration)
         {
             _botConfiguration = botConfiguration;
+
+            _client = new DiscordSocketClient();
         }
 
-        public Task StartAsync()
+        public async Task StartAsync()
         {
-            throw new NotImplementedException();
+            await _client.LoginAsync(TokenType.Bot, _botConfiguration.Credentials.Token);
+            await _client.StartAsync();
+
+            await Task.Delay(-1);
         }
 
-        public Task StopAsync()
+        public async Task StopAsync()
         {
-            throw new NotImplementedException();
+            if (_client != null)
+            {
+                await _client.StopAsync();
+            }
         }
     }
 }

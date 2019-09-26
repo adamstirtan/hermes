@@ -6,7 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Hermes.Core\Hermes.Core.csproj" />
+    <None Remove="config.example.json" />
+    <None Remove="config.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Hermes.Core\Hermes.Core.csproj" />
+  </ItemGroup>
 </Project>
