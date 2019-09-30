@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes", "Hermes\Hermes.csproj", "{A1188C5C-E44E-4840-8EF7-828433D14722}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hermes", "Hermes\Hermes.csproj", "{A1188C5C-E44E-4840-8EF7-828433D14722}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Core", "Hermes.Core\Hermes.Core.csproj", "{88BC0B74-A758-4021-ABB9-BF8C2987CB9B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hermes.Core", "Hermes.Core\Hermes.Core.csproj", "{88BC0B74-A758-4021-ABB9-BF8C2987CB9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.Database", "Hermes.Database\Hermes.Database.csproj", "{A5721AD4-8CF8-4FC5-A84C-F70DE802610C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hermes.ObjectModel", "Hermes.ObjectModel\Hermes.ObjectModel.csproj", "{78B61709-62F9-4BC4-96D2-84E9DF6C8428}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{88BC0B74-A758-4021-ABB9-BF8C2987CB9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88BC0B74-A758-4021-ABB9-BF8C2987CB9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88BC0B74-A758-4021-ABB9-BF8C2987CB9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5721AD4-8CF8-4FC5-A84C-F70DE802610C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5721AD4-8CF8-4FC5-A84C-F70DE802610C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5721AD4-8CF8-4FC5-A84C-F70DE802610C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5721AD4-8CF8-4FC5-A84C-F70DE802610C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78B61709-62F9-4BC4-96D2-84E9DF6C8428}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78B61709-62F9-4BC4-96D2-84E9DF6C8428}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78B61709-62F9-4BC4-96D2-84E9DF6C8428}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78B61709-62F9-4BC4-96D2-84E9DF6C8428}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
