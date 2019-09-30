@@ -16,22 +16,25 @@ namespace Hermes
 
         private static async Task MainAsync(string[] args)
         {
-            if (args.Length != 1)
-            {
-                DisplayUsage();
-                return;
-            }
-
             var botConfiguration = JsonConvert.DeserializeObject<BotConfiguration>(
                 File.ReadAllText(Path.Combine(GetConfigurationDirectory(), "config.json")));
 
-            await new HermesBot(botConfiguration).StartAsync();
-        }
+            var bot = new HermesBot(botConfiguration);
 
-        private static void DisplayUsage()
-        {
-            Console.WriteLine("\nHermes is a Discord bot for doing fun things with friends.");
-            Console.WriteLine("  Usage: hermes [JSON config file]\n");
+            await bot.StartAsync();
+
+            ConsoleKeyInfo key;
+
+            do
+            {
+                key = Console.ReadKey();
+
+                if (key.Key == ConsoleKey.Escape)
+                {
+                    await bot.StopAsync();
+                    return;
+                }
+            } while (true);
         }
 
         private static string GetConfigurationDirectory()
