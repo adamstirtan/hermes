@@ -38,22 +38,14 @@ namespace Hermes.Core.Modules.UrbanDictionaryModule
                 }
                 else
                 {
-                    dynamic json = JObject.Parse(result);
-
-                    if (json.list != null &&
-                        json.list.Count > 0 &&
-                        json.list[0].definition != null)
+                    try
                     {
-                        try
-                        {
-                            await ReplyAsync($"_{phrase}_: {json.list[0].definition}");
-                        }
-                        catch
-                        {
-                            await ReplyAsync($"Nothing found for {phrase}");
-                        }
+                        var json = JObject.Parse(result);
+
+                        await ReplyAsync($"_{phrase}?_");
+                        await ReplyAsync(json["list"][0]["definition"].ToString());
                     }
-                    else
+                    catch
                     {
                         await ReplyAsync($"Nothing found for {phrase}");
                     }
