@@ -4,8 +4,7 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
-using Hermes.Core;
-using Hermes.Core.Configuration;
+using Hermes.Configuration;
 
 namespace Hermes
 {
