@@ -27,9 +27,7 @@ namespace Hermes.Modules.TalkModule
 
             using (var db = _factory.CreateDbContext())
             {
-                messages = db.Messages
-                    .Where(x => x.User == user && x.Content.Length > 10)
-                    .ToArray();
+                messages = db.Messages.ToArray();
             }
 
             if (messages.Length < 25)
@@ -42,7 +40,12 @@ namespace Hermes.Modules.TalkModule
 
             foreach (var message in messages)
             {
-                chain.Add(message.Content.Split(' '));
+                var split = message.Content.Split(' ');
+
+                if (split.Length >= 5)
+                {
+                    chain.Add(split);
+                }
             }
 
             await ReplyAsync(string.Join(" ", chain.Chain()));
