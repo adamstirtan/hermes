@@ -2,6 +2,8 @@
 using System.Reflection;
 using System.Threading.Tasks;
 
+using Microsoft.EntityFrameworkCore;
+
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -26,6 +28,11 @@ namespace Hermes
             _client = new DiscordSocketClient();
             _commands = new CommandService();
             _factory = new DbContextFactory();
+
+            using (var db = _factory.CreateDbContext())
+            {
+                db.Database.Migrate();
+            }
         }
 
         public async Task StartAsync()
@@ -60,7 +67,7 @@ namespace Hermes
                 message.HasMentionPrefix(_client.CurrentUser, ref argPos)) ||
                 message.Author.IsBot)
             {
-                using (var db = _factory.CreateDbContext(null))
+                using (var db = _factory.CreateDbContext())
                 {
                     await db.Messages.AddAsync(new Message
                     {
