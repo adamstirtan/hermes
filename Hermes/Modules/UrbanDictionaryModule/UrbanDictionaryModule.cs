@@ -41,9 +41,10 @@ namespace Hermes.Modules.UrbanDictionaryModule
                     try
                     {
                         var json = JObject.Parse(result);
+                        var response = json["list"][0]["definition"].ToString();
 
                         await ReplyAsync($"_{phrase}?_");
-                        await ReplyAsync(json["list"][0]["definition"].ToString());
+                        await ReplyAsync(response);
                     }
                     catch
                     {
