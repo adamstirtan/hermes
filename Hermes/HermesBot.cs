@@ -61,37 +61,40 @@ namespace Hermes
                 return;
             }
 
-            int argPos = 0;
-
-            if (!(message.HasCharPrefix('!', ref argPos) ||
-                message.HasMentionPrefix(_client.CurrentUser, ref argPos)) ||
-                message.Author.IsBot)
+            if (message.Author.IsBot)
             {
-                using (var db = _factory.CreateDbContext())
-                {
-                    await db.Messages.AddAsync(new Message
-                    {
-                        Content = message.Content,
-                        User = message.Author.Username,
-                        Created = DateTime.UtcNow
-                    });
-
-                    try
-                    {
-                        db.SaveChanges();
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
-                }
-
                 return;
             }
 
-            var context = new SocketCommandContext(_client, message);
+            int position = 0;
 
-            await _commands.ExecuteAsync(context, argPos, null);
+            if (message.HasCharPrefix('!', ref position))
+            {
+                var context = new SocketCommandContext(_client, message);
+
+                await _commands.ExecuteAsync(context, position, null);
+            }
+            else
+            {
+                using (var db = _factory.CreateDbContext())
+                {
+                    try
+                    {
+                        await db.Messages.AddAsync(new Message
+                        {
+                            Content = message.Content,
+                            User = message.Author.Username,
+                            Created = DateTime.UtcNow
+                        });
+
+                        db.SaveChanges();
+                    }
+                    catch (Exception exception)
+                    {
+                        Console.WriteLine(exception);
+                    }
+                }
+            }
         }
     }
 }
