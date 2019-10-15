@@ -27,7 +27,9 @@ namespace Hermes.Modules.TalkModule
 
             using (var db = _factory.CreateDbContext())
             {
-                messages = db.Messages.ToArray();
+                messages = db.Messages
+                    .Where(x => x.User.ToLower() == user.ToLower())
+                    .ToArray();
             }
 
             if (messages.Length < 25)
