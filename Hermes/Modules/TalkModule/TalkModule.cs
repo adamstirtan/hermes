@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 
 using Discord.Commands;
@@ -24,18 +23,16 @@ namespace Hermes.Modules.TalkModule
         [Summary("Synthesis speech using Markov model")]
         public async Task TalkAsync([Summary("The user to make talk")] string user)
         {
-            List<Message> messages = null;
+            Message[] messages = null;
 
             using (var db = _factory.CreateDbContext())
             {
                 messages = db.Messages
                     .Where(x => x.User == user && x.Content.Length > 10)
-                    .OrderByDescending(x => x.Id)
-                    .Take(100)
-                    .ToList();
+                    .ToArray();
             }
 
-            if (messages.Count < 50)
+            if (messages.Length < 25)
             {
                 await ReplyAsync($"{user} hasn't said enough to make them talk yet");
                 return;
