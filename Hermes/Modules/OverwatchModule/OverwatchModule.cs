@@ -1,8 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-
+using Discord;
 using Discord.Commands;
 
 using Newtonsoft.Json.Linq;
@@ -29,7 +30,9 @@ namespace Hermes.Modules.OverwatchModule
             }
             else
             {
-                var battleTag = users[user.ToLower()];
+                string battleTag;
+
+                users.TryGetValue(user.ToLower(), out battleTag);
 
                 if (battleTag == null)
                 {
@@ -55,18 +58,30 @@ namespace Hermes.Modules.OverwatchModule
                 }
                 else
                 {
-                    // try
-                    // {
-                    //     var json = JObject.Parse(result);
-                    //     var response = json["list"][0]["definition"].ToString();
+                    try
+                    {
+                        var json = JObject.Parse(result);
 
-                    //     await ReplyAsync($"_{phrase}?_");
-                    //     await ReplyAsync(response);
-                    // }
-                    // catch
-                    // {
-                    //     await ReplyAsync($"Nothing found for {phrase}");
-                    // }
+                        var level = json["level"].ToString();
+                        var imageUrl = json["icon"].ToString();
+                        //var games = json["quickPlayStats"]["games"];
+                        //var gamesPlayed = games["played"].ToString();
+                        //var gamesWon = games["won"].ToString();
+                        //var winPercentage = (int)((decimal.Parse(gamesPlayed) / decimal.Parse(gamesWon)) * 100);
+
+                        var embed = new EmbedBuilder
+                        {
+                            Title = $"{user} (Level {level})",
+                            //Description = $"Played: {gamesPlayed}, Won: {gamesWon}, Win %: {winPercentage}",
+                            ImageUrl = imageUrl
+                        }.Build();
+
+                        await ReplyAsync(embed: embed);
+                    }
+                    catch
+                    {
+                        await ReplyAsync("Overwatch API isn't working properly");
+                    }
                 }
             }
         }
