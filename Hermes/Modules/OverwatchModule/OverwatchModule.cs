@@ -14,7 +14,9 @@ namespace Hermes.Modules.OverwatchModule
     {
         private readonly Dictionary<string, string> users = new Dictionary<string, string>
         {
-            { "rhaydeo", "Rhaydeo-11799" }
+            { "rhaydeo", "Rhaydeo-11799" },
+            { "lewzer", "lewzer-1695"},
+            { "mastadonn", "Mastadonn-11946" }
         };
 
         [Command("ow")]
