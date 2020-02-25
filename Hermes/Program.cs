@@ -22,13 +22,11 @@ namespace Hermes
 
             await bot.StartAsync();
 
-            ConsoleKeyInfo key;
-
             do
             {
-                key = Console.ReadKey();
+                int key = Console.Read();
 
-                if (key.Key == ConsoleKey.Escape)
+                if (key == (int)ConsoleKey.Escape)
                 {
                     await bot.StopAsync();
                     return;

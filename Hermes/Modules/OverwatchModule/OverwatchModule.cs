@@ -1,8 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-
+using Discord;
 using Discord.Commands;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -29,7 +30,9 @@ namespace Hermes.Modules.OverwatchModule
             }
             else
             {
-                var battleTag = users[user.ToLower()];
+                string battleTag;
+
+                users.TryGetValue(user.ToLower(), out battleTag);
 
                 if (battleTag == null)
                 {
@@ -62,13 +65,12 @@ namespace Hermes.Modules.OverwatchModule
                     //     var json = JObject.Parse(result);
                     //     var response = json["list"][0]["definition"].ToString();
 
-                    //     await ReplyAsync($"_{phrase}?_");
-                    //     await ReplyAsync(response);
-                    // }
-                    // catch
-                    // {
-                    //     await ReplyAsync($"Nothing found for {phrase}");
-                    // }
+                    //    await ReplyAsync(embed: embed);
+                    }
+                    catch
+                    {
+                        await ReplyAsync("Overwatch API isn't working properly");
+                    }
                 }
             }
         }
