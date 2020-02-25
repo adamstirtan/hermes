@@ -4,7 +4,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 using Discord.Commands;
-
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Hermes.Modules.OverwatchModule
@@ -55,6 +55,8 @@ namespace Hermes.Modules.OverwatchModule
                 }
                 else
                 {
+                    OverwatchProfile profile = JsonConvert.DeserializeObject<OverwatchProfile>(result);
+                    
                     // try
                     // {
                     //     var json = JObject.Parse(result);
