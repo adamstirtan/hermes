@@ -1,9 +1,29 @@
+using System;
+using System.Text;
+
 using Newtonsoft.Json;
 
 namespace Hermes.Modules.OverwatchModule
 {
     public class OverwatchProfile
     {
+        public string Title(string battleTag)
+        {
+            return $"{battleTag} (Level {(Prestige.GetValueOrDefault(0) * 100) + Level.GetValueOrDefault(0)})";
+        }
+
+        public string Description()
+        {
+            var stringBuilder = new StringBuilder();
+
+            stringBuilder.Append($"Games won: {GamesWon.GetValueOrDefault(0)}, ");
+            stringBuilder.Append($"Prestige: {Prestige.GetValueOrDefault(0)}, ");
+            stringBuilder.Append($"Rating: {Rating}, ");
+            stringBuilder.Append($"Fag: {(new Random().Next(2) == 0 ? "Yes" : "No")}");
+
+            return stringBuilder.ToString();
+        }
+
         [JsonProperty("icon")]
         public string Icon { get; set; }
 

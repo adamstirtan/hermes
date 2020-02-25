@@ -1,22 +1,22 @@
-using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+
 using Discord;
 using Discord.Commands;
+
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Hermes.Modules.OverwatchModule
 {
-    // https://ow-api.com/docs/#profile
     public class OverwatchModule : ModuleBase<SocketCommandContext>
     {
         private readonly Dictionary<string, string> users = new Dictionary<string, string>
         {
             { "rhaydeo", "Rhaydeo-11799" },
             { "lewzer", "lewzer-1695"},
+            { "dizavef", "lewzer-1695"},
             { "mastadonn", "Mastadonn-11946" }
         };
 
@@ -55,23 +55,20 @@ namespace Hermes.Modules.OverwatchModule
                 if (string.IsNullOrEmpty(result))
                 {
                     await ReplyAsync($"Nothing found for {user}");
+                    return;
                 }
-                else
-                {
-                    OverwatchProfile profile = JsonConvert.DeserializeObject<OverwatchProfile>(result);
-                    
-                    // try
-                    // {
-                    //     var json = JObject.Parse(result);
-                    //     var response = json["list"][0]["definition"].ToString();
+                
+                OverwatchProfile profile = JsonConvert.DeserializeObject<OverwatchProfile>(result);
 
-                    //    await ReplyAsync(embed: embed);
-                    }
-                    catch
-                    {
-                        await ReplyAsync("Overwatch API isn't working properly");
-                    }
-                }
+                var embed = new EmbedBuilder
+                {
+                    ImageUrl = profile.Icon,
+                    Title = profile.Title(battleTag),
+                    Description = profile.Description(),
+
+                }.Build();
+
+                await ReplyAsync(embed: embed);
             }
         }
     }
