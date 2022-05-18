@@ -338,5 +338,6 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
-Hermes/config.json
-Hermes/hermes.sqlite
+
+# Hermes
+/Hermes/hermes.sqlite

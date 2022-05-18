@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Hermes": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Users\\adams\\GitHub\\hermes\\Hermes\\hadouken.json"
+    }
+  }
+}

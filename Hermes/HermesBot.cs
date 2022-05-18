@@ -3,12 +3,12 @@ using System.Reflection;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
-using Hermes.Configuration;
 using Hermes.Database;
 using Hermes.Models;
 
@@ -16,12 +16,12 @@ namespace Hermes
 {
     public class HermesBot : IBot
     {
-        private readonly IBotConfiguration _configuration;
+        private readonly IConfiguration _configuration;
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
         private readonly DbContextFactory _factory;
 
-        public HermesBot(IBotConfiguration configuration)
+        public HermesBot(IConfiguration configuration)
         {
             _configuration = configuration;
 
@@ -29,10 +29,9 @@ namespace Hermes
             _commands = new CommandService();
             _factory = new DbContextFactory();
 
-            using (var db = _factory.CreateDbContext())
-            {
-                db.Database.Migrate();
-            }
+            using var context = _factory.CreateDbContext();
+
+            context.Database.Migrate();
         }
 
         public async Task StartAsync()
@@ -41,7 +40,7 @@ namespace Hermes
 
             await _commands.AddModulesAsync(Assembly.GetExecutingAssembly(), null);
 
-            await _client.LoginAsync(TokenType.Bot, _configuration.Credentials.Token);
+            await _client.LoginAsync(TokenType.Bot, _configuration["Discord:Token"]);
             await _client.StartAsync();
         }
 
@@ -56,7 +55,7 @@ namespace Hermes
 
         private async Task HandleCommandAsync(SocketMessage arg)
         {
-            if (!(arg is SocketUserMessage message))
+            if (arg is not SocketUserMessage message)
             {
                 return;
             }
@@ -70,30 +69,30 @@ namespace Hermes
 
             if (message.HasCharPrefix('!', ref position))
             {
-                var context = new SocketCommandContext(_client, message);
+                await _commands.ExecuteAsync(
+                    new SocketCommandContext(_client, message),
+                    position,
+                    null);
 
-                await _commands.ExecuteAsync(context, position, null);
+                return;
             }
-            else
-            {
-                using (var db = _factory.CreateDbContext())
-                {
-                    try
-                    {
-                        await db.Messages.AddAsync(new Message
-                        {
-                            Content = message.Content,
-                            User = message.Author.Username,
-                            Created = DateTime.UtcNow
-                        });
 
-                        db.SaveChanges();
-                    }
-                    catch (Exception exception)
-                    {
-                        Console.WriteLine(exception);
-                    }
-                }
+            using var context = _factory.CreateDbContext();
+
+            try
+            {
+                await context.Messages.AddAsync(new Message
+                {
+                    Content = message.Content,
+                    User = message.Author.Username,
+                    Created = DateTime.UtcNow
+                });
+
+                context.SaveChanges();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
             }
         }
     }

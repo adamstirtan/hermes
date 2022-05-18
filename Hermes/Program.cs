@@ -1,10 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 
-using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-using Hermes.Configuration;
+using Hermes.Database;
 
 namespace Hermes
 {
@@ -15,35 +18,52 @@ namespace Hermes
 
         private static async Task MainAsync(string[] args)
         {
-            var botConfiguration = JsonConvert.DeserializeObject<BotConfiguration>(
-                File.ReadAllText(Path.Combine(GetConfigurationDirectory(), "config.json")));
-
-            var bot = new HermesBot(botConfiguration);
-
-            await bot.StartAsync();
-
-            do
+            if (args.Length != 1)
             {
-                int key = Console.Read();
-
-                if (key == (int)ConsoleKey.Escape)
-                {
-                    await bot.StopAsync();
-                    return;
-                }
-            } while (true);
-        }
-
-        private static string GetConfigurationDirectory()
-        {
-            var baseDirectory = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
-
-            if (baseDirectory.Parent?.Parent?.Parent != null)
-            {
-                return baseDirectory.Parent.Parent.Parent.FullName;
+                Console.WriteLine("Expected single argument of path to config file");
+                Environment.Exit(-1);
             }
 
-            throw new DirectoryNotFoundException();
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            string basePath = Path.GetDirectoryName(assembly.Location);
+
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(basePath)
+                .AddJsonFile("appsettings.json")
+                .AddUserSecrets(assembly)
+                .Build();
+
+            string connectionString = configuration["ConnectionStrings:DefaultConnection"];
+
+            var serviceProvider = new ServiceCollection()
+                .AddDbContext<ApplicationDbContext>(options =>
+                {
+                    options.UseSqlite(connectionString);
+                })
+                .BuildServiceProvider();
+
+            HermesBot bot = new(configuration);
+
+            try
+            {
+                await bot.StartAsync();
+
+                do
+                {
+                    int key = Console.Read();
+
+                    if (key == (int)ConsoleKey.Escape)
+                    {
+                        await bot.StopAsync();
+                        return;
+                    }
+                } while (true);
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+                Environment.Exit(-1);
+            }
         }
     }
 }
