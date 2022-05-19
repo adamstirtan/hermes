@@ -2,12 +2,22 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using Microsoft.Extensions.Logging;
+
+using Discord;
 using Discord.Commands;
 
 namespace Hermes.Modules.AolSayModule
 {
     public class AolSayModule : ModuleBase<SocketCommandContext>
     {
+        private readonly ILogger<AolSayModule> _logger;
+
+        public AolSayModule(ILogger<AolSayModule> logger)
+        {
+            _logger = logger;
+        }
+
         private readonly List<string> _responses = new List<string>
         {
             "ALL OREAND THE GIFCHERRY BUSH DA BOON CHASED DA WHEASELGIFPASTECLITNUGGET SHIT",
@@ -236,8 +246,13 @@ namespace Hermes.Modules.AolSayModule
         public async Task AolSayAsync()
         {
             var rng = new Random(DateTime.UtcNow.Millisecond);
+            var builder = new EmbedBuilder();
 
-            await ReplyAsync(_responses[rng.Next(0, _responses.Count)]);
+            builder.AddField("!aolsay", _responses[rng.Next(0, _responses.Count)], true);
+            builder.WithThumbnailUrl("https://i.ytimg.com/vi/u5VfPinza3o/maxresdefault.jpg");
+            builder.WithColor(Color.Red);
+
+            await ReplyAsync(embed: builder.Build());
         }
     }
 }

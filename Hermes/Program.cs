@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using Hermes.Database;
+using Hermes.Database.Repositories;
 
 namespace Hermes
 {
@@ -24,8 +25,8 @@ namespace Hermes
                 Environment.Exit(-1);
             }
 
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string basePath = Path.GetDirectoryName(assembly.Location);
+            var assembly = Assembly.GetExecutingAssembly();
+            var basePath = Path.GetDirectoryName(assembly.Location);
 
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(basePath)
@@ -40,13 +41,21 @@ namespace Hermes
                 {
                     options.UseSqlite(connectionString);
                 })
+                .AddLogging()
+                .AddSingleton<IConfiguration>(configuration)
+                .AddScoped<IBot, HermesBot>()
+                .AddScoped<IMessageRepository, MessageRepository>()
                 .BuildServiceProvider();
-
-            HermesBot bot = new(configuration);
 
             try
             {
-                await bot.StartAsync();
+                serviceProvider
+                    .GetRequiredService<ApplicationDbContext>()
+                    .Database.Migrate();
+
+                IBot bot = serviceProvider.GetRequiredService<IBot>();
+
+                await bot.StartAsync(serviceProvider);
 
                 do
                 {

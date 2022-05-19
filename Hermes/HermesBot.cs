@@ -2,43 +2,49 @@
 using System.Reflection;
 using System.Threading.Tasks;
 
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
-using Hermes.Database;
+using Hermes.Database.Repositories;
 using Hermes.Models;
 
 namespace Hermes
 {
     public class HermesBot : IBot
     {
+        private ServiceProvider _serviceProvider;
+
         private readonly IConfiguration _configuration;
+        private readonly ILogger<HermesBot> _logger;
+        private readonly IMessageRepository _messageRepository;
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
-        private readonly DbContextFactory _factory;
 
-        public HermesBot(IConfiguration configuration)
+        public HermesBot(
+            ILogger<HermesBot> logger,
+            IConfiguration configuration,
+            IMessageRepository messageRepository)
         {
             _configuration = configuration;
+            _logger = logger;
+            _messageRepository = messageRepository;
 
             _client = new DiscordSocketClient();
             _commands = new CommandService();
-            _factory = new DbContextFactory();
-
-            using var context = _factory.CreateDbContext();
-
-            context.Database.Migrate();
         }
 
-        public async Task StartAsync()
+        public async Task StartAsync(ServiceProvider services)
         {
+            _serviceProvider = services;
+
             _client.MessageReceived += HandleCommandAsync;
 
-            await _commands.AddModulesAsync(Assembly.GetExecutingAssembly(), null);
+            await _commands.AddModulesAsync(Assembly.GetExecutingAssembly(), services);
 
             await _client.LoginAsync(TokenType.Bot, _configuration["Discord:Token"]);
             await _client.StartAsync();
@@ -55,15 +61,12 @@ namespace Hermes
 
         private async Task HandleCommandAsync(SocketMessage arg)
         {
-            if (arg is not SocketUserMessage message)
+            if (arg is not SocketUserMessage message || message.Author.IsBot)
             {
                 return;
             }
 
-            if (message.Author.IsBot)
-            {
-                return;
-            }
+            _logger.LogInformation(message.ToString());
 
             int position = 0;
 
@@ -72,23 +75,19 @@ namespace Hermes
                 await _commands.ExecuteAsync(
                     new SocketCommandContext(_client, message),
                     position,
-                    null);
+                    _serviceProvider);
 
                 return;
             }
 
-            using var context = _factory.CreateDbContext();
-
             try
             {
-                await context.Messages.AddAsync(new Message
+                _messageRepository.Create(new Message
                 {
                     Content = message.Content,
                     User = message.Author.Username,
                     Created = DateTime.UtcNow
                 });
-
-                context.SaveChanges();
             }
             catch (Exception exception)
             {

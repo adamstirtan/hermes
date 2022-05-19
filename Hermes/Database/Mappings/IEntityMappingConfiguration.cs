@@ -10,7 +10,7 @@ namespace Hermes.Database.Mappings
         void Map(ModelBuilder builder);
     }
 
-    public interface IEntityMappingConfiguration<T> : IEntityMappingConfiguration where T : BaseEntity
+    public interface IEntityMappingConfiguration<T> : IEntityMappingConfiguration where T : BaseModel
     {
         void Map(EntityTypeBuilder<T> builder);
     }

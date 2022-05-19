@@ -5,7 +5,7 @@ using Hermes.Models;
 
 namespace Hermes.Database.Mappings
 {
-    public abstract class BaseMap<T> : IEntityMappingConfiguration<T> where T : BaseEntity
+    public abstract class BaseMap<T> : IEntityMappingConfiguration<T> where T : BaseModel
     {
         protected const string ColumnTypeId = "bigint";
         protected const string ColumnTypeInteger = "int";

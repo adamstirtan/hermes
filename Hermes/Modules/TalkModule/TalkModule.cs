@@ -5,32 +5,26 @@ using Discord.Commands;
 
 using Markov;
 
-using Hermes.Database;
-using Hermes.Models;
+using Hermes.Database.Repositories;
 
 namespace Hermes.Modules.TalkModule
 {
     public class TalkModule : ModuleBase<SocketCommandContext>
     {
-        private readonly DbContextFactory _factory;
+        private readonly IMessageRepository _messageRepository;
 
-        public TalkModule()
+        public TalkModule(IMessageRepository messageRepository)
         {
-            _factory = new DbContextFactory();
+            _messageRepository = messageRepository;
         }
 
         [Command("talk")]
         [Summary("Synthesis speech using Markov model")]
         public async Task TalkAsync([Summary("The user to make talk")] string user)
         {
-            Message[] messages = null;
-
-            using (var db = _factory.CreateDbContext())
-            {
-                messages = db.Messages
-                    .Where(x => x.User.ToLower() == user.ToLower())
-                    .ToArray();
-            }
+            var messages = _messageRepository
+                .Where(x => x.User.ToLower() == user.ToLower())
+                .ToArray();
 
             if (messages.Length < 25)
             {
