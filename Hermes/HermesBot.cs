@@ -46,7 +46,7 @@ namespace Hermes
 
             await _commands.AddModulesAsync(Assembly.GetExecutingAssembly(), services);
 
-            await _client.LoginAsync(TokenType.Bot, _configuration["Discord:Token"]);
+            await _client.LoginAsync(TokenType.Bot, _configuration["DISCORD_TOKEN"]);
             await _client.StartAsync();
         }
 

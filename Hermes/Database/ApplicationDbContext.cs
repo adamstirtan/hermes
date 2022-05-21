@@ -29,11 +29,10 @@ namespace Hermes.Database
             var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
             var configuration = new ConfigurationBuilder()
-                .SetBasePath(basePath)
-                .AddJsonFile("appsettings.json")
+                .AddEnvironmentVariables("HERMES_")
                 .Build();
 
-            var connectionString = configuration["ConnectionStrings:DefaultConnection"]
+            var connectionString = configuration["CONNECTION_STRING"]
                 .Replace("=", "=" + Directory.GetCurrentDirectory() + "\\");
 
             optionsBuilder.UseSqlite(connectionString);

@@ -340,4 +340,7 @@ ASALocalRun/
 healthchecksdb
 
 # Hermes
+/Hermes/Properties/launchsettings.json
 /Hermes/hermes.sqlite
+/Hermes/hermes.sqlite-shm
+/Hermes/hermes.sqlite-wal

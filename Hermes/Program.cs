@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
@@ -19,22 +17,11 @@ namespace Hermes
 
         private static async Task MainAsync(string[] args)
         {
-            if (args.Length != 1)
-            {
-                Console.WriteLine("Expected single argument of path to config file");
-                Environment.Exit(-1);
-            }
-
-            var assembly = Assembly.GetExecutingAssembly();
-            var basePath = Path.GetDirectoryName(assembly.Location);
-
             var configuration = new ConfigurationBuilder()
-                .SetBasePath(basePath)
-                .AddJsonFile("appsettings.json")
-                .AddUserSecrets(assembly)
+                .AddEnvironmentVariables("HERMES_")
                 .Build();
 
-            string connectionString = configuration["ConnectionStrings:DefaultConnection"];
+            string connectionString = configuration["CONNECTION_STRING"];
 
             var serviceProvider = new ServiceCollection()
                 .AddDbContext<ApplicationDbContext>(options =>
