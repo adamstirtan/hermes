@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 using Hermes.Database;
 using Hermes.Database.Repositories;
@@ -18,17 +20,22 @@ namespace Hermes
         private static async Task MainAsync(string[] args)
         {
             var configuration = new ConfigurationBuilder()
-                .AddEnvironmentVariables("HERMES_")
+                .AddJsonFile("appsettings.json", false, true)
+                .AddUserSecrets(Assembly.GetExecutingAssembly())
                 .Build();
 
-            string connectionString = configuration["CONNECTION_STRING"];
+            string connectionString = configuration.GetConnectionString("Default");
 
             var serviceProvider = new ServiceCollection()
                 .AddDbContext<ApplicationDbContext>(options =>
                 {
                     options.UseSqlite(connectionString);
                 })
-                .AddLogging()
+                .AddLogging(options =>
+                {
+                    options.ClearProviders();
+                    options.AddConsole();
+                })
                 .AddSingleton<IConfiguration>(configuration)
                 .AddScoped<IBot, HermesBot>()
                 .AddScoped<IMessageRepository, MessageRepository>()

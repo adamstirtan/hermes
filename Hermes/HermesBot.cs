@@ -34,13 +34,20 @@ namespace Hermes
             _logger = logger;
             _messageRepository = messageRepository;
 
-            _client = new DiscordSocketClient();
+            DiscordSocketConfig config = new()
+            {
+                GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent
+            };
+
+            _client = new DiscordSocketClient(config);
             _commands = new CommandService();
         }
 
         public async Task StartAsync(ServiceProvider services)
         {
-            string discordToken = _configuration["DISCORD_TOKEN"] ?? throw new Exception("Missing Discord Token");
+            string discordToken = _configuration["DiscordToken"] ?? throw new Exception("Missing Discord Token");
+
+            _logger.LogInformation($"Discord Token: {discordToken}");
 
             _serviceProvider = services;
 
@@ -50,6 +57,8 @@ namespace Hermes
 
             await _client.LoginAsync(TokenType.Bot, discordToken);
             await _client.StartAsync();
+
+            _logger.LogInformation("Connected to Discord successfully");
         }
 
         public async Task StopAsync()
@@ -71,8 +80,9 @@ namespace Hermes
             _logger.LogInformation(message.ToString());
 
             int position = 0;
+            bool messageIsCommand = message.HasCharPrefix('!', ref position);
 
-            if (message.HasCharPrefix('!', ref position))
+            if (messageIsCommand)
             {
                 await _commands.ExecuteAsync(
                     new SocketCommandContext(_client, message),
@@ -93,7 +103,7 @@ namespace Hermes
             }
             catch (Exception exception)
             {
-                Console.WriteLine(exception);
+                _logger.LogError(exception.Message);
             }
         }
     }
