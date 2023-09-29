@@ -18,7 +18,7 @@ namespace Hermes.Modules.AolSayModule
             _logger = logger;
         }
 
-        private readonly List<string> _responses = new List<string>
+        private readonly List<string> _responses = new()
         {
             "ALL OREAND THE GIFCHERRY BUSH DA BOON CHASED DA WHEASELGIFPASTECLITNUGGET SHIT",
             "WH0A WHUT W00D PEEPUHL THEEENK IF DAY GN00 EYE WUZ A JEEEZUS FREEEK?!",

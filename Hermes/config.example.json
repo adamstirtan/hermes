@@ -1,8 +1,0 @@
-{
-    "Identity": {
-        "Name": "Hermes"
-    },
-    "Credentials": {
-        "Token": "YOUR_DISCORD_BOT_TOKEN"
-    }
-}

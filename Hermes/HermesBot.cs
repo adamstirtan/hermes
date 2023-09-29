@@ -40,13 +40,15 @@ namespace Hermes
 
         public async Task StartAsync(ServiceProvider services)
         {
+            string discordToken = _configuration["DISCORD_TOKEN"] ?? throw new Exception("Missing Discord Token");
+
             _serviceProvider = services;
 
             _client.MessageReceived += HandleCommandAsync;
 
             await _commands.AddModulesAsync(Assembly.GetExecutingAssembly(), services);
 
-            await _client.LoginAsync(TokenType.Bot, _configuration["DISCORD_TOKEN"]);
+            await _client.LoginAsync(TokenType.Bot, discordToken);
             await _client.StartAsync();
         }
 

@@ -46,11 +46,14 @@ namespace Hermes
 
                 do
                 {
-                    int key = Console.Read();
+                    var keyInfo = Console.ReadKey();
 
-                    if (key == (int)ConsoleKey.Escape)
+                    if (keyInfo.Key == ConsoleKey.Q)
                     {
+                        Console.WriteLine("\nShutting down!");
+
                         await bot.StopAsync();
+
                         return;
                     }
                 } while (true);
