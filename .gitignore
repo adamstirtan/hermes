@@ -344,3 +344,5 @@ healthchecksdb
 /Hermes/hermes.sqlite
 /Hermes/hermes.sqlite-shm
 /Hermes/hermes.sqlite-wal
+
+.DS_STORE
