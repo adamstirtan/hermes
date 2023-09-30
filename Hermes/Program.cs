@@ -44,13 +44,6 @@ namespace Hermes
             try
             {
                 ApplicationDbContext context = serviceProvider.GetRequiredService<ApplicationDbContext>();
-
-                if (context == null)
-                {
-                    throw new ArgumentException("Unable to start database");
-                }
-
-                context.Database.EnsureCreated();
                 context.Database.Migrate();
 
                 IBot bot = serviceProvider.GetRequiredService<IBot>();
