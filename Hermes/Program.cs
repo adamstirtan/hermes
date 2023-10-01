@@ -19,6 +19,19 @@ namespace Hermes
 
         private static async Task MainAsync(string[] args)
         {
+            var services = CreateServices();
+
+            ApplicationDbContext context = services.GetRequiredService<ApplicationDbContext>();
+            context.Database.Migrate();
+
+            IBot bot = services.GetRequiredService<IBot>();
+            await bot.StartAsync(services);
+
+            await Task.Delay(-1);
+        }
+
+        private static ServiceProvider CreateServices()
+        {
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, true)
                 .AddUserSecrets(Assembly.GetExecutingAssembly())
@@ -41,21 +54,7 @@ namespace Hermes
                 .AddScoped<IMessageRepository, MessageRepository>()
                 .BuildServiceProvider();
 
-            try
-            {
-                ApplicationDbContext context = serviceProvider.GetRequiredService<ApplicationDbContext>();
-                context.Database.Migrate();
-
-                IBot bot = serviceProvider.GetRequiredService<IBot>();
-                await bot.StartAsync(serviceProvider);
-
-                Console.ReadLine();
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception.Message);
-                Environment.Exit(-1);
-            }
+            return serviceProvider;
         }
     }
 }
