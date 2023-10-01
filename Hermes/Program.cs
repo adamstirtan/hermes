@@ -49,19 +49,7 @@ namespace Hermes
                 IBot bot = serviceProvider.GetRequiredService<IBot>();
                 await bot.StartAsync(serviceProvider);
 
-                do
-                {
-                    var keyInfo = Console.ReadKey();
-
-                    if (keyInfo.Key == ConsoleKey.Q)
-                    {
-                        Console.WriteLine("\nShutting down!");
-
-                        await bot.StopAsync();
-
-                        return;
-                    }
-                } while (true);
+                Console.ReadLine();
             }
             catch (Exception exception)
             {
