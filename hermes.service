@@ -1,0 +1,14 @@
+[Unit]
+Description=Hermes Discord Bot
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/dotnet /home/pi/hermes/Hermes/bin/Debug/net7.0/Hermes.dll
+WorkingDirectory=/home/pi/hermes/Hermes/bin/Debug/net7.0
+Restart=always
+RestartSec=10
+User=pi
+Group=pi
+
+[Install]
+WantedBy=multi-user.target
